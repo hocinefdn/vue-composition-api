@@ -1,11 +1,12 @@
 <template>
   <div class="notes">
+
     <AddEditNote
-      v-model:modelValue="newNote"
+      v-model="newNote"
+      placeholder="Add a new note"
       ref="addEditNoteRef"
-      placeholder="Edit note"
     >
-      <template v-slot:buttons>
+      <template #buttons>
         <button
           @click="addNote"
           :disabled="!newNote"
@@ -16,31 +17,50 @@
       </template>
     </AddEditNote>
 
-    <Note v-for="note in storeNotes.notes" :key="note.id" :note="note" />
+    <Note
+      v-for="note in storeNotes.notes"
+      :key="note.id"
+      :note="note"
+    />
+
   </div>
 </template>
 
 <script setup>
+
 /*
   imports
 */
 
-import { ref } from "vue";
-import Note from "@/components/Notes/Note.vue";
-import AddEditNote from "@/components/Notes/AddEditNote.vue";
+  import { ref } from 'vue'
+  import Note from '@/components/Notes/Note.vue'
+  import AddEditNote from '@/components/Notes/AddEditNote.vue'
+  import { useStoreNotes } from '@/stores/storeNotes'
+  import { useWatchCharacters } from '@/use/useWatchCharacters'
 
-import { useNotesStore } from "@/stores/storeNotes";
+/*
+  store
+*/
+
+  const storeNotes = useStoreNotes()
+
 /*
   notes
 */
 
-const newNote = ref("");
-const addEditNoteRef = ref(null);
-const storeNotes = useNotesStore();
+  const newNote = ref('')
+  const addEditNoteRef = ref(null)
 
-const addNote = () => {
-  storeNotes.addNote(newNote.value);
-  newNote.value = "";
-  addEditNoteRef.value.focusTextarea();
-};
+  const addNote = () => {
+    storeNotes.addNote(newNote.value)
+    newNote.value = ''
+    addEditNoteRef.value.focusTextarea()
+  }
+
+/*
+  watch characters
+*/
+
+  useWatchCharacters(newNote)
+
 </script>
